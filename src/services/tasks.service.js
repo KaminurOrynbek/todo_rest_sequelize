@@ -1,52 +1,50 @@
-const tasks = []; 
+const tasks = [];
 
-async function addTask(user, title, description) {
-  if (tasks.find((task) => task.user === user && task.title === title)) {
-    throw new Error('Task with this title already exists');
-  }
-  tasks.push({ user, title, description, done: false });
+async function addTask({ title, description, tags }) {
+  const task = { id: tasks.length + 1, title, description, tags, done: false };
+  tasks.push(task);
+  return task;
 }
 
-async function getTasks(user) {
-  return tasks.filter((task) => task.user === user && !task.done);
+async function getTasks() {
+  return tasks.filter(task => !task.done);
 }
 
-async function getCompletedTasks(user) {
-  return tasks.filter((task) => task.user === user && task.done);
+async function getCompletedTasks() {
+  return tasks.filter(task => task.done);
 }
 
-async function markTaskAsDone(user, title) {
-  const task = tasks.find((task) => task.user === user && task.title === title);
-  if (!task) {
-    throw new Error('Task not found');
-  }
-  task.done = true;
+async function getTaskById(id) {
+  return tasks.find(task => task.id === parseInt(id));
 }
 
-async function updateTask(user, taskTitle, newTitle, newDescription) {
-  const task = tasks.find((task) => task.user === user && task.title === taskTitle);
-  if (!task) {
-    throw new Error('Task not found');
-  }
-  if (tasks.find((task) => task.user === user && task.title === newTitle && task.title !== taskTitle)) {
-    throw new Error('A task with the new title already exists');
-  }
-  task.title = newTitle;
-  task.description = newDescription;
+async function findTasksByTags(tags) {
+  return tasks.filter(task => tags.every(tag => task.tags.includes(tag)));
 }
 
-async function deleteTask(user, title) {
-  const index = tasks.findIndex((task) => task.user === user && task.title === title);
-  if (index !== -1) {
-    tasks.splice(index, 1);
-  }
+async function updateTask(id, { title, description, tags, done }) {
+  const task = tasks.find(task => task.id === parseInt(id));
+  if (!task) throw new Error('Task not found');
+  task.title = title;
+  task.description = description;
+  task.tags = tags;
+  task.done = done;
+  return task;
+}
+
+async function deleteTask(id) {
+  const index = tasks.findIndex(task => task.id === parseInt(id));
+  if (index === -1) throw new Error('Task not found');
+  tasks.splice(index, 1);
+  return true;
 }
 
 module.exports = {
   addTask,
   getTasks,
   getCompletedTasks,
-  markTaskAsDone,
+  getTaskById,
+  findTasksByTags,
   updateTask,
   deleteTask,
 };

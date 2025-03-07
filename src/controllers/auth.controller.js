@@ -4,9 +4,9 @@ const { ValidationError, UniqueConstraintError } = require('sequelize');
 
 async function register(req, res, next) {
   try {
-    const { email, password, firstName, lastName } = req.body;
+    const { email, password, name } = req.body;
     validateAuth(email, password);
-    await registerService(email, password, firstName, lastName);
+    await registerService(email, password, name);
     res.status(200).json({ message: 'User registered successfully.' });
   } catch (error) {
     if (error instanceof ValidationError) {

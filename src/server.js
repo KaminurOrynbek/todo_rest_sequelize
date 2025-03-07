@@ -1,7 +1,9 @@
-const app = require('./app');
+const { ApolloServer } = require('apollo-server');
+const typeDefs = require('./schema');
+const resolvers = require('./resolvers');
 
-const PORT = 3000;
+const server = new ApolloServer({ typeDefs, resolvers });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+server.listen().then(({ url }) => {
+  console.log(`🚀 Server ready at ${url}`);
 });
